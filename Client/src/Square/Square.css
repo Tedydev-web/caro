@@ -1,0 +1,358 @@
+.grid-square {
+  width: 38px;
+  height: 38px;
+  background-color: rgba(15, 15, 36, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(73, 80, 155, 0.5);
+  transform: translateZ(0);
+  contain: layout style;
+}
+
+.grid-square::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(86, 84, 255, 0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.grid-square:hover {
+  transform: scale(1.05);
+  background-color: rgba(25, 25, 50, 0.9);
+  z-index: 5;
+  border-color: rgba(86, 84, 255, 0.8);
+  box-shadow: 0 0 10px rgba(86, 84, 255, 0.4);
+}
+
+.grid-square:hover::before {
+  opacity: 1;
+  animation: pulseRadial 2s infinite;
+}
+
+@keyframes pulseRadial {
+  0% { transform: scale(0.8); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(0.8); opacity: 0.3; }
+}
+
+.circle {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border: 3px solid #36d1dc;
+  box-shadow: 0 0 8px #36d1dc;
+  background: transparent;
+  animation: fadeInCircle 0.3s forwards;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+@keyframes fadeInCircle {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glowCircle {
+  0% { box-shadow: 0 0 5px #36d1dc, inset 0 0 3px #36d1dc; }
+  100% { box-shadow: 0 0 15px #36d1dc, inset 0 0 8px #36d1dc; }
+}
+
+.cross {
+  width: 80%;
+  height: 80%;
+  position: relative;
+  transform: rotate(45deg);
+  animation: fadeInCross 0.3s forwards, glowCross 2s infinite alternate;
+  opacity: 0;
+}
+
+@keyframes fadeInCross {
+  from { opacity: 0; transform: rotate(45deg) scale(0.2); }
+  to { opacity: 1; transform: rotate(45deg) scale(1); }
+}
+
+@keyframes glowCross {
+  0% { filter: drop-shadow(0 0 5px #ff4b6e); }
+  100% { filter: drop-shadow(0 0 10px #ff4b6e); }
+}
+
+.cross::before,
+.cross::after {
+  content: '';
+  position: absolute;
+  background-color: #ff4b6e;
+  border-radius: 3px;
+}
+
+.cross::before {
+  width: 3px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px #ff4b6e;
+}
+
+.cross::after {
+  width: 100%;
+  height: 3px;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  box-shadow: 0 0 10px #ff4b6e;
+}
+
+.winLine {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 15px #ffffff, inset 0 0 10px rgba(255, 255, 255, 0.5) !important;
+  animation: winPulse 1.5s infinite alternate !important;
+  z-index: 4;
+  position: relative;
+}
+
+.winLine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.1) 70%);
+  animation: glowWinEffect 2s infinite alternate;
+}
+
+/* Thêm hiệu ứng đường kẻ neon */
+.winLine::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  height: 5px;
+  width: 250px; /* Chiều dài đủ để đi qua 5 ô */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 3px;
+  z-index: 6;
+  box-shadow: 
+    0 0 10px #ffffff,
+    0 0 20px #ffffff,
+    0 0 30px #ffffff,
+    0 0 40px rgba(255, 255, 255, 0.8);
+  animation: neonLine 1.5s infinite alternate;
+  opacity: 0.9;
+}
+
+@keyframes neonLine {
+  0% { 
+    box-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 15px #ffffff,
+      0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+  }
+  100% { 
+    box-shadow: 
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 30px #ffffff,
+      0 0 40px rgba(255, 255, 255, 0.8);
+    opacity: 1;
+  }
+}
+
+@keyframes glowWinEffect {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes winPulse {
+  0% { box-shadow: 0 0 10px #ffffff, inset 0 0 5px rgba(255, 255, 255, 0.5); }
+  100% { box-shadow: 0 0 20px #ffffff, inset 0 0 10px rgba(255, 255, 255, 0.8); }
+}
+
+.active-player-square {
+  animation: activePulse 1.5s infinite alternate;
+}
+
+@keyframes activePulse {
+  0% { box-shadow: 0 0 5px currentColor; }
+  100% { box-shadow: 0 0 15px currentColor; }
+}
+
+/* Responsive sizes */
+@media (max-width: 576px) {
+  .grid-square {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid-square {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (min-width: 1800px) {
+  .grid-square {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* Hiệu ứng đường kẻ neon theo các hướng khác nhau */
+
+/* Đường ngang (mặc định) */
+.winLine::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  height: 5px;
+  width: 250px; /* Chiều dài đủ để đi qua 5 ô */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 3px;
+  z-index: 6;
+  box-shadow: 
+    0 0 10px #ffffff,
+    0 0 20px #ffffff,
+    0 0 30px #ffffff,
+    0 0 40px rgba(255, 255, 255, 0.8);
+  animation: neonLine 1.5s infinite alternate;
+  opacity: 0.9;
+}
+
+/* Đường dọc */
+.win-vertical::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* Đường chéo xuống phải */
+.win-diagonal-right::after {
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 280px; /* Điều chỉnh chiều dài để đi qua 5 ô chéo */
+}
+
+/* Đường chéo xuống trái */
+.win-diagonal-left::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 280px; /* Điều chỉnh chiều dài để đi qua 5 ô chéo */
+}
+
+/* Thêm animation cho đường kẻ mỗi hướng với hiệu ứng khác nhau */
+.win-horizontal::after {
+  animation: neonLineHorizontal 1.5s infinite alternate;
+}
+
+.win-vertical::after {
+  animation: neonLineVertical 1.5s infinite alternate;
+}
+
+.win-diagonal-right::after {
+  animation: neonLineDiagonalRight 1.5s infinite alternate;
+}
+
+.win-diagonal-left::after {
+  animation: neonLineDiagonalLeft 1.5s infinite alternate;
+}
+
+@keyframes neonLineHorizontal {
+  0% { 
+    box-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 15px #ffffff,
+      0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+    width: 240px;
+  }
+  100% { 
+    box-shadow: 
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 30px #ffffff,
+      0 0 40px rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    width: 260px;
+  }
+}
+
+@keyframes neonLineVertical {
+  0% { 
+    box-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 15px #ffffff,
+      0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+    height: 4px;
+  }
+  100% { 
+    box-shadow: 
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 30px #ffffff,
+      0 0 40px rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    height: 6px;
+  }
+}
+
+@keyframes neonLineDiagonalRight {
+  0% { 
+    box-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 15px #ffffff,
+      0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+    width: 270px;
+  }
+  100% { 
+    box-shadow: 
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 30px #ffffff,
+      0 0 40px rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    width: 290px;
+  }
+}
+
+@keyframes neonLineDiagonalLeft {
+  0% { 
+    box-shadow: 
+      0 0 5px #ffffff,
+      0 0 10px #ffffff,
+      0 0 15px #ffffff,
+      0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0.7;
+    width: 270px;
+  }
+  100% { 
+    box-shadow: 
+      0 0 10px #ffffff,
+      0 0 20px #ffffff,
+      0 0 30px #ffffff,
+      0 0 40px rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    width: 290px;
+  }
+}

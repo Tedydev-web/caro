@@ -1,0 +1,695 @@
+:root {
+  --primary-color: #09091a;
+  --secondary-color: #0f0f24;
+  --accent-color-1: #5654ff;
+  --accent-color-2: #3634a8;
+  --text-color: #ffffff;
+  --player1-color: #36d1dc;
+  --player2-color: #ff4b6e;
+  --board-size: min(90vh, 90vw);
+  --grid-border-color: rgba(73, 80, 155, 0.6);
+  --neon-glow: 0 0 10px rgba(86, 84, 255, 0.5), 0 0 20px rgba(86, 84, 255, 0.3);
+  --neon-text-glow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px rgba(86, 84, 255, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  font-family: 'Montserrat', 'Segoe UI', 'Roboto', sans-serif;
+  background: radial-gradient(circle at center, var(--secondary-color) 0%, var(--primary-color) 100%);
+  color: var(--text-color);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.main-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 10px;
+  position: relative;
+  perspective: 1000px;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(86, 84, 255, 0.15) 0%, transparent 20%),
+    radial-gradient(circle at 80% 70%, rgba(54, 209, 220, 0.15) 0%, transparent 20%),
+    radial-gradient(circle at center, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background-size: 100% 100%;
+  background-position: center;
+  animation: bg-pulse 10s infinite alternate;
+}
+
+@keyframes bg-pulse {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+.playOnline {
+  font-weight: 700;
+  border: none;
+  background: linear-gradient(45deg, var(--accent-color-2), var(--accent-color-1));
+  color: white;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  cursor: pointer;
+  padding: 20px 50px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(86, 84, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(86, 84, 255, 0.6);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.playOnline:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(86, 84, 255, 0.8);
+  letter-spacing: 5px;
+}
+
+.playOnline:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.playOnline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: 0.5s;
+}
+
+.playOnline:hover::before {
+  left: 100%;
+}
+
+.playOnline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: button-border 3s infinite;
+}
+
+@keyframes button-border {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.game-heading {
+  padding: 20px 40px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, rgba(15, 15, 36, 0.8), rgba(30, 30, 60, 0.5));
+  color: var(--text-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(86, 84, 255, 0.4);
+  letter-spacing: 5px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(86, 84, 255, 0.7);
+  text-transform: uppercase;
+  border: 1px solid rgba(86, 84, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.game-heading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent, 
+    rgba(86, 84, 255, 0.2),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: heading-shine 5s infinite;
+}
+
+@keyframes heading-shine {
+  0% { transform: translateX(-100%); }
+  20%, 100% { transform: translateX(100%); }
+}
+
+.game-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: var(--board-size);
+  transform-style: preserve-3d;
+  animation: appearIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes appearIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.square-wrapper-container {
+  width: 100%;
+  position: relative;
+  border-radius: 10px;
+  padding: 2px;
+  background: linear-gradient(145deg, rgba(86, 84, 255, 0.2), rgba(54, 209, 220, 0.1));
+  box-shadow: 
+    0 0 0 1px rgba(86, 84, 255, 0.3),
+    var(--neon-glow),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.square-wrapper-container::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, 
+    var(--accent-color-1), 
+    transparent, 
+    var(--player1-color), 
+    transparent, 
+    var(--player2-color), 
+    transparent, 
+    var(--accent-color-1)
+  );
+  border-radius: 12px;
+  z-index: -1;
+  animation: border-animate 5s linear infinite;
+}
+
+@keyframes border-animate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.square-wrapper {
+  display: grid;
+  /* grid-template-columns được thiết lập động trong React */
+  gap: 2px;
+  width: 100%;
+  height: calc(var(--board-size) * 0.85);
+  max-height: calc(var(--board-size) * 0.85);
+  overflow: auto;
+  padding: 10px;
+  background-color: rgba(15, 15, 36, 0.9);
+  border-radius: 8px;
+  /* tối ưu cho scroll */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-color-1) var(--secondary-color);
+  will-change: transform;
+  position: relative;
+}
+
+.square-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.square-wrapper::-webkit-scrollbar-track {
+  background: rgba(15, 15, 36, 0.6);
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.square-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--accent-color-1);
+  border-radius: 10px;
+  border: 2px solid rgba(15, 15, 36, 0.6);
+  box-shadow: inset 0 0 6px rgba(54, 209, 220, 0.5);
+}
+
+.square-wrapper-focus-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px 20px rgba(10, 10, 30, 0.8);
+  z-index: 2;
+  opacity: 0.5;
+}
+
+.move-detection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 10px;
+  position: relative;
+  z-index: 5;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.player-info:hover {
+  transform: translateY(-5px);
+}
+
+.left,
+.right {
+  height: 60px;
+  min-width: 200px;
+  border-radius: 15px;
+  padding: 10px 20px;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  text-align: center;
+  font-weight: bold;
+  background: linear-gradient(135deg, rgba(15, 15, 36, 0.8), rgba(30, 30, 60, 0.7));
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(86, 84, 255, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(86, 84, 255, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.left::before,
+.right::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    var(--accent-color-1), 
+    transparent,
+    var(--accent-color-1)
+  );
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0.5;
+  animation: border-pulse 3s infinite alternate;
+}
+
+@keyframes border-pulse {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
+}
+
+.player-label {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #a7a7da;
+  text-shadow: 0 0 8px rgba(167, 167, 218, 0.5);
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(90deg, #a7a7da, #ffffff, #a7a7da);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shine 3s linear infinite;
+}
+
+@keyframes text-shine {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.turn-indicator {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: rgba(86, 84, 255, 0.2);
+  box-shadow: 0 0 10px rgba(86, 84, 255, 0.5);
+  animation: pulse-indicator 1.5s infinite alternate;
+}
+
+@keyframes pulse-indicator {
+  0% { opacity: 0.7; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+.waiting {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(15px);
+  background: rgba(9, 9, 26, 0.8);
+  z-index: 100;
+}
+
+.waiting p {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  text-align: center;
+  color: white;
+  animation: pulse 2s infinite;
+  padding: 40px 50px;
+  border-radius: 20px;
+  background: rgba(15, 15, 36, 0.9);
+  max-width: 80%;
+  border: 2px solid var(--accent-color-1);
+  box-shadow: 0 0 30px rgba(86, 84, 255, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(86, 84, 255, 0.5);
+  letter-spacing: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.waiting p::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: waiting-shine 2s infinite;
+}
+
+@keyframes waiting-shine {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200%); }
+}
+
+.finished-state {
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px 25px;
+  background: linear-gradient(135deg, rgba(15, 15, 36, 0.8), rgba(30, 30, 60, 0.5));
+  border-radius: 12px;
+  animation: fadeIn 0.5s ease-in-out;
+  text-transform: capitalize;
+  border: 1px solid var(--grid-border-color);
+  box-shadow: var(--neon-glow);
+  text-shadow: var(--neon-text-glow);
+  backdrop-filter: blur(5px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.current-move-cross {
+  border: 2px solid var(--player2-color) !important;
+  box-shadow: 0 0 15px var(--player2-color) !important;
+  animation: playerPulse 1.5s infinite alternate;
+}
+
+.current-move-circle {
+  border: 2px solid var(--player1-color) !important;
+  box-shadow: 0 0 15px var(--player1-color) !important;
+  animation: playerPulse 1.5s infinite alternate;
+}
+
+@keyframes playerPulse {
+  0% { box-shadow: 0 0 5px currentColor; }
+  100% { box-shadow: 0 0 15px currentColor, 0 0 30px currentColor; }
+}
+
+.opponent-info {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  text-align: center;
+  margin-top: 15px;
+  background: rgba(15, 15, 36, 0.7);
+  padding: 10px 20px;
+  border-radius: 10px;
+  animation: fadeIn 0.5s ease-in-out;
+  border: 1px solid var(--grid-border-color);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.board-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  z-index: 10;
+}
+
+.control-btn {
+  background: rgba(15, 15, 36, 0.7);
+  border: none;
+  color: var(--text-color);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 5px rgba(86, 84, 255, 0.4);
+  border: 1px solid var(--grid-border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 30%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+  border-radius: 50% 50% 0 0;
+}
+
+.control-btn:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 0 15px rgba(86, 84, 255, 0.6);
+  background: var(--accent-color-2);
+}
+
+.control-btn svg {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+}
+
+/* Responsive design cho các màn hình kích thước khác nhau */
+@media (max-width: 768px) {
+  .game-container {
+    width: 95%;
+  }
+  
+  .move-detection {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .left, .right {
+    width: 100%;
+    height: 45px;
+    min-width: auto;
+  }
+  
+  .square-wrapper {
+    gap: 2px;
+    height: calc(var(--board-size) * 0.7);
+  }
+  
+  .playOnline {
+    padding: 12px 24px;
+  }
+}
+
+/* Tối ưu cho TV lớn */
+@media (min-width: 1800px) {
+  :root {
+    --board-size: min(80vh, 80vw);
+  }
+  
+  .game-heading {
+    font-size: 3.5rem;
+    padding: 20px 40px;
+  }
+  
+  .main-div {
+    padding: 30px;
+  }
+  
+  .left, .right {
+    height: 60px;
+    min-width: 240px;
+    font-size: 1.5rem;
+  }
+  
+  .control-btn {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .control-btn svg {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .turn-indicator {
+    font-size: 0.9rem;
+  }
+}
+
+/* Thêm CSS cho thông báo lỗi kết nối */
+.connection-error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(9, 9, 26, 0.95);
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.error-container {
+  background: var(--secondary-color);
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(86, 84, 255, 0.3);
+  border: 1px solid var(--accent-color-1);
+  position: relative;
+  overflow: hidden;
+}
+
+.error-container h2 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.error-container p {
+  color: var(--text-color);
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(86, 84, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--accent-color-1);
+  margin: 0 auto;
+  animation: spinner 1.2s linear infinite;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, transparent, var(--accent-color-1), transparent);
+  animation: loading-bar 2s linear infinite;
+}
+
+@keyframes loading-bar {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Thêm animation cho nước đi cuối cùng */
+@keyframes lastMove {
+  0%, 100% { box-shadow: 0 0 0 2px var(--accent-color-1); }
+  50% { box-shadow: 0 0 15px 3px var(--accent-color-1); }
+}
+
+.grid-square.current-move-circle, 
+.grid-square.current-move-cross {
+  position: relative;
+  animation: lastMove 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* Thêm animation cho nước đi cuối cùng trong Square.css */
+.grid-square.current-move-circle::before, 
+.grid-square.current-move-cross::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 3px;
+  z-index: -1;
+  background: radial-gradient(circle, rgba(86, 84, 255, 0.3) 0%, transparent 70%);
+}
+
+/* Cờ Caro Cùng FPOLY container */
+.Cờ Caro Cùng FPOLY-container {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  width: 150px;
+  height: auto;
+  z-index: 10;
+  animation: float 3s ease-in-out infinite alternate;
+}
+
+.Cờ Caro Cùng FPOLY {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  transition: transform 0.3s ease;
+}
+
+.Cờ Caro Cùng FPOLY:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
