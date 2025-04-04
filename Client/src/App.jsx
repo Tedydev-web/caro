@@ -250,9 +250,9 @@ const App = () => {
 
   const takePlayerName = useCallback(async () => {
     const result = await Swal.fire({
-      title: 'Nhập email của bạn',
+      title: 'Nhập tên của bạn',
       input: 'text',
-      inputPlaceholder: 'email người chơi',
+      inputPlaceholder: 'Tên người chơi',
       showCancelButton: true,
       confirmButtonText: 'Bắt đầu',
       cancelButtonText: 'Hủy',
@@ -262,7 +262,7 @@ const App = () => {
       cancelButtonColor: '#3634a8',
       inputValidator: (value) => {
         if (!value) {
-          return 'Vui lòng nhập email của bạn!';
+          return 'Vui lòng nhập tên của bạn!';
         }
       },
     });
@@ -494,48 +494,10 @@ const App = () => {
         <div className="logo-container">
           <img src={fpolyLogo} alt="FPT Polytechnic Logo" className="logo" />
         </div>
-        
-        {/* Thêm phần tử hình dạng bay lơ lửng */}
-        <div className="floating-shapes">
-          <div className="shape shape1"></div>
-          <div className="shape shape2"></div>
-          <div className="shape shape3"></div>
-          <div className="shape shape4"></div>
-        </div>
-        
-        <div className="home-page">
-          <div className="home-title-container">
-            <h1 className="game-heading">Cờ Caro Cùng FPOLY</h1>
-            <p className="home-subtitle">
-              Trải nghiệm trò chơi cờ caro trực tuyến với đối thủ từ khắp nơi. 
-              Chơi ngay để thách thức kỹ năng và giành chiến thắng!
-            </p>
-          </div>
-          
-          <div className="game-features">
-            <div className="feature-item">
-              <div className="feature-icon">🎮</div>
-              <h3 className="feature-title">Chơi Trực Tuyến</h3>
-              <p className="feature-desc">Kết nối và đấu với người chơi khác mọi lúc mọi nơi</p>
-            </div>
-            
-            <div className="feature-item">
-              <div className="feature-icon">⚡</div>
-              <h3 className="feature-title">Thời Gian Thực</h3>
-              <p className="feature-desc">Trải nghiệm chơi mượt mà với công nghệ Socket.IO</p>
-            </div>
-            
-            <div className="feature-item">
-              <div className="feature-icon">🏆</div>
-              <h3 className="feature-title">Chiến Thắng</h3>
-              <p className="feature-desc">Xếp 5 quân liên tiếp để giành chiến thắng hấp dẫn</p>
-            </div>
-          </div>
-          
-          <button onClick={playOnlineClick} className="playOnline">
-            Chơi ngay
-          </button>
-        </div>
+        <h1 className="game-heading">Cờ Caro Cùng FPOLY</h1>
+        <button onClick={playOnlineClick} className="playOnline">
+          Chơi ngay
+        </button>
       </div>
     );
   }

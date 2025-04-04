@@ -1,0 +1,42 @@
+name: Game Deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Backend + Frontend
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            echo "📁 Pull latest changes..."
+            cd /var/www/game
+
+            # Pull code cho backend
+            cd backend
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S git pull origin master
+            echo "📦 Install dependencies backend"
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S npm install
+
+            echo "🚀 Restart backend"
+            pm2 restart game-backend || pm2 start index.js --name game-backend
+            pm2 save
+
+            # Build frontend
+            cd ../frontend
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S git pull origin master
+            echo "📦 Install dependencies frontend"
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S npm install
+            echo "🏗️ Build frontend"
+            npm run build
+
+            echo "✅ Deployment completed"
